@@ -41,18 +41,19 @@ jobs:
           $elapsedTime = 0
           while ($ngrokProcess.HasExited -eq $false -and $elapsedTime -lt $restartInterval) {
             Write-Output "RDP is active at $(Get-Date)"
+            
             # Simulasi aktivitas
             Add-Type -TypeDefinition @"
-            using System;
-            using System.Runtime.InteropServices;
-            public class PreventIdle {
-                [DllImport("user32.dll")]
-                public static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
-                public static void PreventIdleMouse() {
-                    mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero); // Simulate mouse move
-                }
-            }
-            "@
+using System;
+using System.Runtime.InteropServices;
+public class PreventIdle {
+    [DllImport("user32.dll")]
+    public static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, UIntPtr dwExtraInfo);
+    public static void PreventIdleMouse() {
+        mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero); // Simulate mouse move
+    }
+}
+"@
             [PreventIdle]::PreventIdleMouse()
 
             Start-Sleep -Seconds $idleInterval
